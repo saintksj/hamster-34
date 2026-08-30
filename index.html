@@ -102,7 +102,7 @@
   </style>
 </head>
 <body>
-  <h1>햄스터로봇 근접센서 미로탈출 활동지</h1>
+  <h1>햄스터로봇 오른쪽 벽 따라 미로탈출</h1>
   <p class="subtitle">엔트리(Entry) 피지컬 컴퓨팅 · 활동이 끝나면 아래의 ‘PDF로 저장’ 버튼을 눌러 저장하세요.</p>
 
   <div class="meta-row">
@@ -112,61 +112,55 @@
   </div>
 
   <section>
-    <h2>1. 근접센서 값 관찰하기</h2>
-    <p class="desc">자를 이용해 로봇 앞면과 벽 사이의 거리를 맞춘 후, 왼쪽·오른쪽 근접센서 값을 기록해 봅시다. 벽에 너무 바짝 붙이지 않도록 합니다.</p>
+    <h2>1. 오른쪽 벽 센서값 관찰하기</h2>
+    <p class="desc">햄스터의 오른쪽 면을 벽과 나란히 놓습니다. 앞쪽에는 다른 벽이 없도록 한 후 오른쪽 근접센서 값을 기록해 봅시다.</p>
     <div class="table-wrap"><table>
-      <tr><th style="width:32%">측정 상황</th><th style="width:20%">왼쪽 센서</th><th style="width:20%">오른쪽 센서</th><th>관찰 내용</th></tr>
-      <tr><td>벽에 가까울 때 (약 2cm)</td><td><input data-save id="near-left" type="text"></td><td><input data-save id="near-right" type="text"></td><td><input data-save id="near-note" type="text"></td></tr>
-      <tr><td>벽에서 조금 떨어졌을 때 (약 5cm)</td><td><input data-save id="mid-left" type="text"></td><td><input data-save id="mid-right" type="text"></td><td><input data-save id="mid-note" type="text"></td></tr>
-      <tr><td>벽에서 멀리 떨어졌을 때 (약 10cm)</td><td><input data-save id="none-left" type="text"></td><td><input data-save id="none-right" type="text"></td><td><input data-save id="none-note" type="text"></td></tr>
-      <tr><td>코너 (한쪽은 벽, 한쪽은 열린 곳)</td><td><input data-save id="corner-left" type="text"></td><td><input data-save id="corner-right" type="text"></td><td><input data-save id="corner-note" type="text" placeholder="어느 쪽에 벽이 있나요?"></td></tr>
+      <tr><th style="width:45%">햄스터의 방향</th><th style="width:22%">오른쪽 센서값</th><th>관찰 내용</th></tr>
+      <tr><td>오른쪽 벽과 나란히 놓았을 때</td><td><input data-save id="parallel-value" type="text"></td><td><input data-save id="parallel-note" type="text" placeholder="기준이 되는 자세"></td></tr>
+      <tr><td>앞부분을 오른쪽 벽 쪽으로 살짝 기울였을 때</td><td><input data-save id="toward-value" type="text"></td><td><input data-save id="toward-note" type="text" placeholder="값이 커졌나요?"></td></tr>
+      <tr><td>앞부분을 오른쪽 벽 반대쪽으로 살짝 기울였을 때</td><td><input data-save id="away-value" type="text"></td><td><input data-save id="away-note" type="text" placeholder="값이 작아졌나요?"></td></tr>
     </table></div>
   </section>
 
   <section>
-    <h2>2. 우리 팀의 임계값 정하기</h2>
-    <p class="desc">관찰한 값을 바탕으로 로봇이 방향을 바꾸는 기준값을 정해 봅시다.</p>
+    <h2>2. 우리 모둠의 기준값 정하기</h2>
+    <p class="desc">오른쪽 벽과 나란히 놓았을 때의 센서값을 참고하여 방향을 바꾸는 기준값을 정합니다.</p>
     <div class="table-wrap"><table>
-      <tr><th>너무 가까움 기준 (센서 값 &gt; 기준값)</th><th>너무 멀어짐 기준 (센서 값 &lt; 기준값)</th></tr>
-      <tr><td><input data-save id="too-close" type="text" placeholder="기준값"></td><td><input data-save id="too-far" type="text" placeholder="기준값"></td></tr>
+      <tr><th style="width:45%">오른쪽 벽 따라가기 기준값</th><th>이 값을 선택한 이유</th></tr>
+      <tr><td><input data-save id="wall-threshold" type="text" placeholder="기준값"></td><td><input data-save id="threshold-reason" type="text" placeholder="나란히 놓았을 때의 값과 비교해 보세요."></td></tr>
     </table></div>
   </section>
 
   <section>
-    <h2>3. 알고리즘 순서 정리하기</h2>
-    <p class="desc">우수법(오른쪽 벽을 따라 이동하기)을 기준으로 빈칸을 채워 봅시다. 앞에 벽이 있는지는 왼쪽 센서로, 오른쪽 벽과의 거리는 오른쪽 센서로 판단합니다.</p>
-    <div class="algo-item"><span class="num">①</span> 왼쪽 센서 값이 <input data-save id="algo-1-value" aria-label="첫 번째 기준값" style="max-width:70px"> 보다 크면 → <input data-save id="algo-1-action" aria-label="첫 번째 동작" placeholder="어느 방향으로 회전할까요?"></div>
-    <div class="algo-item"><span class="num">②</span> 오른쪽 센서 값이 <input data-save id="algo-2-value" aria-label="두 번째 기준값" style="max-width:70px"> 보다 크면 → <input data-save id="algo-2-action" aria-label="두 번째 동작" placeholder="벽과 너무 가까울 때의 동작"></div>
-    <div class="algo-item"><span class="num">③</span> 오른쪽 센서 값이 <input data-save id="algo-3-value" aria-label="세 번째 기준값" style="max-width:70px"> 보다 작으면 → <input data-save id="algo-3-action" aria-label="세 번째 동작" placeholder="벽에서 너무 멀어졌을 때의 동작"></div>
-    <div class="algo-item"><span class="num">④</span> 그 외의 경우 → <input data-save id="algo-4-action" aria-label="네 번째 동작" placeholder="기본 동작"></div>
+    <h2>3. 우수법 알고리즘 완성하기</h2>
+    <p class="desc">오른쪽 벽을 따라가도록 빈칸을 채우고, 사용할 바퀴 속도를 기록해 봅시다.</p>
+    <div class="algo-item"><span class="num">①</span> 오른쪽 센서값이 기준값보다 크면 → <input data-save id="algo-high-action" aria-label="센서값이 클 때의 동작" placeholder="어느 쪽으로 틀까요?"></div>
+    <div class="algo-item"><span class="num">②</span> 그렇지 않으면 → <input data-save id="algo-low-action" aria-label="센서값이 작을 때의 동작" placeholder="어느 쪽으로 틀까요?"></div>
+    <div class="table-wrap"><table>
+      <tr><th>동작</th><th>왼쪽 바퀴 속도</th><th>오른쪽 바퀴 속도</th></tr>
+      <tr><td>왼쪽으로 틀기</td><td><input data-save id="left-turn-left-wheel" type="text" placeholder="예: 0"></td><td><input data-save id="left-turn-right-wheel" type="text" placeholder="예: 30"></td></tr>
+      <tr><td>오른쪽으로 틀기</td><td><input data-save id="right-turn-left-wheel" type="text" placeholder="예: 30"></td><td><input data-save id="right-turn-right-wheel" type="text" placeholder="예: 0"></td></tr>
+    </table></div>
   </section>
 
-  <div class="pdf-page-break html2pdf__page-break" aria-hidden="true"></div>
-
   <section>
-    <h2>4. 블록 조립 체크리스트</h2>
+    <h2>4. 블록 조립 및 미로 테스트</h2>
     <div class="checklist">
       <label><input data-save id="check-1" type="checkbox"> ‘시작하기 버튼을 클릭했을 때’ 블록을 사용했다.</label>
-      <label><input data-save id="check-2" type="checkbox"> ‘계속 반복하기’ 블록 안에 조건문을 넣었다.</label>
-      <label><input data-save id="check-3" type="checkbox"> ‘만일~아니면~만일~아니면’ 구조로 상황을 순서대로 처리했다.</label>
-      <label><input data-save id="check-4" type="checkbox"> 바퀴 굴리기 블록의 왼쪽·오른쪽 속도를 상황에 맞게 설정했다.</label>
-      <label><input data-save id="check-5" type="checkbox"> 실제 미로에서 3회 이상 테스트했다.</label>
+      <label><input data-save id="check-2" type="checkbox"> ‘계속 반복하기’ 안에 ‘만일~아니면’ 조건문을 넣었다.</label>
+      <label><input data-save id="check-3" type="checkbox"> 오른쪽 근접센서와 우리 모둠의 기준값을 사용했다.</label>
+      <label><input data-save id="check-4" type="checkbox"> 햄스터의 오른쪽 면을 벽과 나란히 놓고 출발했다.</label>
     </div>
-  </section>
-
-  <section>
-    <h2>5. 테스트 결과 및 개선</h2>
     <div class="table-wrap"><table>
-      <tr><th style="width:12%">시도</th><th style="width:44%">성공·실패 및 문제 상황</th><th>개선 아이디어</th></tr>
+      <tr><th style="width:12%">시도</th><th style="width:25%">성공/실패</th><th>문제 상황과 바꾼 값</th></tr>
       <tr><td>1</td><td><input data-save id="test-1-result" type="text"></td><td><input data-save id="test-1-improve" type="text"></td></tr>
       <tr><td>2</td><td><input data-save id="test-2-result" type="text"></td><td><input data-save id="test-2-improve" type="text"></td></tr>
-      <tr><td>3</td><td><input data-save id="test-3-result" type="text"></td><td><input data-save id="test-3-improve" type="text"></td></tr>
     </table></div>
   </section>
 
   <section>
-    <h2>6. 소감 및 배운 점</h2>
-    <textarea data-save id="reflection" placeholder="센서 값, 임계값, 조건문을 사용하며 알게 된 점을 써 보세요."></textarea>
+    <h2>5. 한 줄로 정리하기</h2>
+    <textarea data-save id="reflection" style="min-height:60px" placeholder="오른쪽 벽을 따라 미로를 탈출하며 알게 된 점을 한 줄로 써 보세요."></textarea>
   </section>
 
   <div class="toolbar" id="toolbar">
@@ -177,7 +171,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
-    const STORAGE_KEY = 'hamster_maze_worksheet_v4';
+    const STORAGE_KEY = 'hamster_maze_worksheet_v5';
     const fields = Array.from(document.querySelectorAll('[data-save]'));
     const status = document.getElementById('save-status');
     let saveTimer;
