@@ -113,12 +113,13 @@
 
   <section>
     <h2>1. 근접센서 값 관찰하기</h2>
-    <p class="desc">로봇을 벽에 가까이 또는 멀리 놓아 보며 왼쪽·오른쪽 근접센서 값을 기록해 봅시다.</p>
+    <p class="desc">자를 이용해 로봇 앞면과 벽 사이의 거리를 맞춘 후, 왼쪽·오른쪽 근접센서 값을 기록해 봅시다. 벽에 너무 바짝 붙이지 않도록 합니다.</p>
     <div class="table-wrap"><table>
       <tr><th style="width:32%">측정 상황</th><th style="width:20%">왼쪽 센서</th><th style="width:20%">오른쪽 센서</th><th>관찰 내용</th></tr>
-      <tr><td>벽에 아주 가까울 때</td><td><input data-save id="near-left" type="text"></td><td><input data-save id="near-right" type="text"></td><td><input data-save id="near-note" type="text"></td></tr>
-      <tr><td>벽에서 조금 떨어졌을 때</td><td><input data-save id="mid-left" type="text"></td><td><input data-save id="mid-right" type="text"></td><td><input data-save id="mid-note" type="text"></td></tr>
-      <tr><td>벽이 없을 때(코너)</td><td><input data-save id="none-left" type="text"></td><td><input data-save id="none-right" type="text"></td><td><input data-save id="none-note" type="text"></td></tr>
+      <tr><td>벽에 가까울 때 (약 2cm)</td><td><input data-save id="near-left" type="text"></td><td><input data-save id="near-right" type="text"></td><td><input data-save id="near-note" type="text"></td></tr>
+      <tr><td>벽에서 조금 떨어졌을 때 (약 5cm)</td><td><input data-save id="mid-left" type="text"></td><td><input data-save id="mid-right" type="text"></td><td><input data-save id="mid-note" type="text"></td></tr>
+      <tr><td>벽에서 멀리 떨어졌을 때 (약 10cm)</td><td><input data-save id="none-left" type="text"></td><td><input data-save id="none-right" type="text"></td><td><input data-save id="none-note" type="text"></td></tr>
+      <tr><td>코너 (한쪽은 벽, 한쪽은 열린 곳)</td><td><input data-save id="corner-left" type="text"></td><td><input data-save id="corner-right" type="text"></td><td><input data-save id="corner-note" type="text" placeholder="어느 쪽에 벽이 있나요?"></td></tr>
     </table></div>
   </section>
 
@@ -176,7 +177,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
-    const STORAGE_KEY = 'hamster_maze_worksheet_v3';
+    const STORAGE_KEY = 'hamster_maze_worksheet_v4';
     const fields = Array.from(document.querySelectorAll('[data-save]'));
     const status = document.getElementById('save-status');
     let saveTimer;
