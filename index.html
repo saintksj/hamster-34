@@ -18,7 +18,7 @@
       font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
       max-width: 820px;
       margin: 0 auto;
-      padding: 24px 20px 96px;
+      padding: 24px 20px 40px;
       color: var(--text);
       background: #fafaf8;
       line-height: 1.6;
@@ -62,14 +62,17 @@
       padding: 9px 10px; font-size: 13px; font-family: inherit; resize: vertical;
     }
     .toolbar {
-      position: fixed; z-index: 10; bottom: 0; left: 0; right: 0;
-      background: rgba(255,255,255,.96); border-top: 1px solid #ddd;
-      padding: 11px max(16px, env(safe-area-inset-right)) calc(11px + env(safe-area-inset-bottom));
+      width: 100%;
+      margin-top: 18px;
+      background: #fff; border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 12px 14px;
       display: flex; align-items: center; justify-content: center; gap: 10px;
-      box-shadow: 0 -2px 10px rgba(0,0,0,.05);
+      box-shadow: 0 3px 14px rgba(0,0,0,.08);
     }
     #save-status { font-size: 12px; color: #777; margin-right: auto; }
     button {
+      flex: 0 1 150px; min-width: 120px; max-width: 100%;
       padding: 10px 18px; font-size: 14px; border-radius: 8px; border: none;
       cursor: pointer; font-weight: 600;
     }
@@ -78,14 +81,14 @@
     .btn-primary:hover { background: var(--green-dark); }
     .btn-secondary { background: #eee; color: #333; }
     @media (max-width: 600px) {
-      body { padding: 18px 12px 112px; }
+      body { padding: 18px 12px 32px; }
       h1 { font-size: 20px; }
       section { padding: 15px 14px; }
       .algo-item { flex-wrap: wrap; }
       .algo-item input:last-child { flex-basis: 60%; }
       .toolbar { flex-wrap: wrap; }
       #save-status { width: 100%; margin: 0; text-align: center; order: 3; }
-      button { flex: 1; }
+      button { flex: 1 1 calc(50% - 5px); min-width: 0; padding: 10px 8px; }
     }
     @media print {
       .toolbar { display: none !important; }
@@ -95,6 +98,7 @@
       table { min-width: 0; }
       input, textarea { outline: none !important; }
     }
+    .pdf-page-break { height: 0; break-before: page; page-break-before: always; }
   </style>
 </head>
 <body>
@@ -136,6 +140,8 @@
     <div class="algo-item"><span class="num">④</span> 그 외의 경우 → <input data-save id="algo-4-action" aria-label="네 번째 동작" placeholder="기본 동작"></div>
   </section>
 
+  <div class="pdf-page-break html2pdf__page-break" aria-hidden="true"></div>
+
   <section>
     <h2>4. 블록 조립 체크리스트</h2>
     <div class="checklist">
@@ -170,10 +176,18 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
-    const STORAGE_KEY = 'hamster_maze_worksheet_v2';
+    const STORAGE_KEY = 'hamster_maze_worksheet_v3';
     const fields = Array.from(document.querySelectorAll('[data-save]'));
     const status = document.getElementById('save-status');
     let saveTimer;
+
+    function getKoreaToday() {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Seoul', year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(new Date());
+      const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+      return `${values.year}-${values.month}-${values.day}`;
+    }
 
     function collectData() {
       return fields.reduce((data, field) => {
@@ -200,7 +214,7 @@
     function restoreAll() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) {
-        if (!document.getElementById('date').value) document.getElementById('date').valueAsDate = new Date();
+        if (!document.getElementById('date').value) document.getElementById('date').value = getKoreaToday();
         saveAll(false);
         return;
       }
@@ -253,7 +267,7 @@
         if (field.type === 'checkbox') field.checked = false;
         else field.value = '';
       });
-      document.getElementById('date').valueAsDate = new Date();
+      document.getElementById('date').value = getKoreaToday();
       localStorage.removeItem(STORAGE_KEY);
       saveAll(false);
       status.textContent = '활동지를 초기화했습니다.';
