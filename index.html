@@ -1,204 +1,272 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>햄스터로봇 미로탈출 활동지</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 24px 20px 80px;
-    color: #222;
-    background: #fafaf8;
-    line-height: 1.6;
-  }
-  h1 { font-size: 22px; margin-bottom: 4px; }
-  .subtitle { color: #666; font-size: 13px; margin-bottom: 20px; }
-  .meta-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-  .meta-row label { font-size: 13px; color: #555; display: block; margin-bottom: 4px; }
-  .meta-row input {
-    padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; width: 150px;
-  }
-  section {
-    background: #fff; border: 1px solid #e0ddd3; border-radius: 10px;
-    padding: 18px 20px; margin-bottom: 16px;
-  }
-  h2 { font-size: 16px; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid #f0ede2; }
-  p.desc { font-size: 13px; color: #555; margin: 0 0 12px; }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
-  th, td { border: 1px solid #ddd; padding: 6px 8px; font-size: 13px; text-align: left; }
-  th { background: #f5f3ea; font-weight: 500; }
-  td input, td select { width: 100%; border: none; background: transparent; font-size: 13px; padding: 4px; }
-  td input:focus { background: #fffbe8; outline: 1px solid #d8c98a; border-radius: 3px; }
-  .checklist label { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 8px; }
-  .checklist input[type=checkbox] { width: 16px; height: 16px; }
-  .blank-line {
-    border: none; border-bottom: 1px solid #bbb; background: transparent;
-    font-size: 13px; padding: 6px 4px; width: 100%; margin-bottom: 10px;
-  }
-  .algo-item { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; font-size: 13px; }
-  .algo-item .num { flex-shrink: 0; font-weight: 500; }
-  .algo-item input { flex: 1; border: none; border-bottom: 1px solid #bbb; background: transparent; font-size: 13px; padding: 4px; }
-  textarea {
-    width: 100%; min-height: 70px; border: 1px solid #ddd; border-radius: 6px;
-    padding: 8px 10px; font-size: 13px; font-family: inherit; resize: vertical;
-  }
-  .toolbar {
-    position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
-    border-top: 1px solid #ddd; padding: 12px 20px; display: flex; justify-content: center; gap: 12px;
-  }
-  button {
-    padding: 10px 20px; font-size: 14px; border-radius: 8px; border: none;
-    cursor: pointer; font-weight: 500;
-  }
-  .btn-primary { background: #3a7d5c; color: #fff; }
-  .btn-secondary { background: #eee; color: #333; }
-  @media print {
-    .toolbar { display: none; }
-    body { padding: 0 20px; background: #fff; }
-    section { break-inside: avoid; border: 1px solid #ccc; }
-    td input, td select, .algo-item input, textarea { border-bottom: 1px solid #999 !important; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>햄스터로봇 근접센서 미로탈출 활동지</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --green: #3a7d5c;
+      --green-dark: #2e674b;
+      --paper: #fff;
+      --line: #dedbd1;
+      --soft: #f5f3ea;
+      --text: #222;
+    }
+    body {
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 20px 96px;
+      color: var(--text);
+      background: #fafaf8;
+      line-height: 1.6;
+    }
+    h1 { font-size: 23px; margin: 0 0 4px; }
+    .subtitle { color: #666; font-size: 13px; margin: 0 0 20px; }
+    .meta-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .meta-row > div { flex: 1 1 150px; }
+    .meta-row label { font-size: 13px; color: #555; display: block; margin-bottom: 4px; }
+    .meta-row input {
+      width: 100%; padding: 9px 10px; border: 1px solid #ccc;
+      border-radius: 6px; background: #fff; font-size: 14px;
+    }
+    section {
+      background: var(--paper); border: 1px solid #e0ddd3; border-radius: 10px;
+      padding: 18px 20px; margin-bottom: 16px;
+    }
+    h2 { font-size: 16px; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 2px solid #f0ede2; }
+    p.desc { font-size: 13px; color: #555; margin: 0 0 12px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; min-width: 560px; border-collapse: collapse; margin-bottom: 6px; }
+    th, td { border: 1px solid #ddd; padding: 7px 8px; font-size: 13px; text-align: left; }
+    th { background: var(--soft); font-weight: 600; }
+    td input, td select {
+      width: 100%; min-width: 56px; border: none; background: transparent;
+      font-family: inherit; font-size: 13px; padding: 5px;
+    }
+    input:focus, textarea:focus {
+      background: #fffbe8; outline: 2px solid #d8c98a; border-radius: 3px;
+    }
+    .checklist label { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; margin-bottom: 9px; }
+    .checklist input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; flex: 0 0 auto; }
+    .algo-item { display: flex; align-items: baseline; gap: 6px; margin-bottom: 11px; font-size: 13px; }
+    .algo-item .num { flex-shrink: 0; font-weight: 600; }
+    .algo-item input {
+      flex: 1; min-width: 50px; border: none; border-bottom: 1px solid #bbb;
+      background: transparent; font-family: inherit; font-size: 13px; padding: 5px;
+    }
+    textarea {
+      width: 100%; min-height: 90px; border: 1px solid #ddd; border-radius: 6px;
+      padding: 9px 10px; font-size: 13px; font-family: inherit; resize: vertical;
+    }
+    .toolbar {
+      position: fixed; z-index: 10; bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,.96); border-top: 1px solid #ddd;
+      padding: 11px max(16px, env(safe-area-inset-right)) calc(11px + env(safe-area-inset-bottom));
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,.05);
+    }
+    #save-status { font-size: 12px; color: #777; margin-right: auto; }
+    button {
+      padding: 10px 18px; font-size: 14px; border-radius: 8px; border: none;
+      cursor: pointer; font-weight: 600;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-secondary { background: #eee; color: #333; }
+    @media (max-width: 600px) {
+      body { padding: 18px 12px 112px; }
+      h1 { font-size: 20px; }
+      section { padding: 15px 14px; }
+      .algo-item { flex-wrap: wrap; }
+      .algo-item input:last-child { flex-basis: 60%; }
+      .toolbar { flex-wrap: wrap; }
+      #save-status { width: 100%; margin: 0; text-align: center; order: 3; }
+      button { flex: 1; }
+    }
+    @media print {
+      .toolbar { display: none !important; }
+      body { max-width: none; padding: 0; background: #fff; }
+      section { break-inside: avoid; border: 1px solid #bbb; box-shadow: none; }
+      .table-wrap { overflow: visible; }
+      table { min-width: 0; }
+      input, textarea { outline: none !important; }
+    }
+  </style>
 </head>
 <body>
+  <h1>햄스터로봇 근접센서 미로탈출 활동지</h1>
+  <p class="subtitle">엔트리(Entry) 피지컬 컴퓨팅 · 활동이 끝나면 아래의 ‘PDF로 저장’ 버튼을 눌러 저장하세요.</p>
 
-<h1>햄스터로봇 근접센서 미로탈출 활동지</h1>
-<p class="subtitle">엔트리(Entry) 피지컬 컴퓨팅 - 작성 후 아래 "PDF로 저장" 버튼을 눌러 저장하세요.</p>
-
-<div class="meta-row">
-  <div><label>모둠</label><input type="text" placeholder="예: 3모둠"></div>
-  <div><label>이름</label><input type="text" placeholder="이름"></div>
-  <div><label>날짜</label><input type="date"></div>
-</div>
-
-<section>
-  <h2>1. 근접센서 값 관찰하기</h2>
-  <p class="desc">로봇을 벽에 가까이/멀리 놓아보며 왼쪽·오른쪽 근접센서 값을 기록해 봅시다.</p>
-  <table>
-    <tr><th style="width:32%">측정 상황</th><th style="width:20%">왼쪽 센서</th><th style="width:20%">오른쪽 센서</th><th>관찰 내용</th></tr>
-    <tr><td>벽에 아주 가까울 때</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
-    <tr><td>벽에서 조금 떨어졌을 때</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
-    <tr><td>벽이 없을 때(코너)</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
-  </table>
-</section>
-
-<section>
-  <h2>2. 우리 팀의 임계값 정하기</h2>
-  <table>
-    <tr><th style="width:50%">너무 가까움 기준 (값 &gt; ___)</th><th>너무 멀어짐 기준 (값 &lt; ___)</th></tr>
-    <tr><td><input type="text"></td><td><input type="text"></td></tr>
-  </table>
-</section>
-
-<section>
-  <h2>3. 알고리즘 순서 정리하기</h2>
-  <p class="desc">우수법(오른쪽 벽을 짚으며 이동) 기준으로 빈칸을 채워 봅시다.</p>
-  <div class="algo-item"><span class="num">①</span> 왼쪽 센서 값이 <input type="text" style="max-width:60px"> 보다 크면 → <input type="text"></div>
-  <div class="algo-item"><span class="num">②</span> 오른쪽 센서 값이 <input type="text" style="max-width:60px"> 보다 크면 → <input type="text"></div>
-  <div class="algo-item"><span class="num">③</span> 오른쪽 센서 값이 <input type="text" style="max-width:60px"> 보다 작으면 → <input type="text"></div>
-  <div class="algo-item"><span class="num">④</span> 그 외의 경우 → <input type="text"></div>
-</section>
-
-<section>
-  <h2>4. 블록 조립 체크리스트</h2>
-  <div class="checklist">
-    <label><input type="checkbox"> 시작하기 버튼을 클릭했을 때 블록을 사용했다</label>
-    <label><input type="checkbox"> 계속 반복하기 블록 안에 조건문을 넣었다</label>
-    <label><input type="checkbox"> 만일~아니면~만일~아니면 구조로 3가지 상황을 모두 처리했다</label>
-    <label><input type="checkbox"> 바퀴 굴리기 블록의 좌우 속도값을 상황에 맞게 설정했다</label>
-    <label><input type="checkbox"> 실제 미로에서 3회 이상 테스트했다</label>
+  <div class="meta-row">
+    <div><label for="team">모둠</label><input id="team" data-save type="text" placeholder="예: 3모둠"></div>
+    <div><label for="name">이름</label><input id="name" data-save type="text" placeholder="이름"></div>
+    <div><label for="date">날짜</label><input id="date" data-save type="date"></div>
   </div>
-</section>
 
-<section>
-  <h2>5. 테스트 결과 및 개선</h2>
-  <table>
-    <tr><th style="width:12%">시도</th><th style="width:44%">성공/실패 및 문제 상황</th><th>개선 아이디어</th></tr>
-    <tr><td>1</td><td><input type="text"></td><td><input type="text"></td></tr>
-    <tr><td>2</td><td><input type="text"></td><td><input type="text"></td></tr>
-    <tr><td>3</td><td><input type="text"></td><td><input type="text"></td></tr>
-  </table>
-</section>
+  <section>
+    <h2>1. 근접센서 값 관찰하기</h2>
+    <p class="desc">로봇을 벽에 가까이 또는 멀리 놓아 보며 왼쪽·오른쪽 근접센서 값을 기록해 봅시다.</p>
+    <div class="table-wrap"><table>
+      <tr><th style="width:32%">측정 상황</th><th style="width:20%">왼쪽 센서</th><th style="width:20%">오른쪽 센서</th><th>관찰 내용</th></tr>
+      <tr><td>벽에 아주 가까울 때</td><td><input data-save id="near-left" type="text"></td><td><input data-save id="near-right" type="text"></td><td><input data-save id="near-note" type="text"></td></tr>
+      <tr><td>벽에서 조금 떨어졌을 때</td><td><input data-save id="mid-left" type="text"></td><td><input data-save id="mid-right" type="text"></td><td><input data-save id="mid-note" type="text"></td></tr>
+      <tr><td>벽이 없을 때(코너)</td><td><input data-save id="none-left" type="text"></td><td><input data-save id="none-right" type="text"></td><td><input data-save id="none-note" type="text"></td></tr>
+    </table></div>
+  </section>
 
-<section>
-  <h2>6. 소감 및 배운 점</h2>
-  <textarea></textarea>
-</section>
+  <section>
+    <h2>2. 우리 팀의 임계값 정하기</h2>
+    <p class="desc">관찰한 값을 바탕으로 로봇이 방향을 바꾸는 기준값을 정해 봅시다.</p>
+    <div class="table-wrap"><table>
+      <tr><th>너무 가까움 기준 (센서 값 &gt; 기준값)</th><th>너무 멀어짐 기준 (센서 값 &lt; 기준값)</th></tr>
+      <tr><td><input data-save id="too-close" type="text" placeholder="기준값"></td><td><input data-save id="too-far" type="text" placeholder="기준값"></td></tr>
+    </table></div>
+  </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<div class="toolbar" id="toolbar">
-  <span id="save-status" style="font-size:12px;color:#888;align-self:center;margin-right:auto"></span>
-  <button class="btn-secondary" onclick="if(confirm('입력한 내용이 모두 지워집니다. 계속할까요?')){document.querySelectorAll('input,textarea').forEach(el=>{if(el.type==='checkbox')el.checked=false;else el.value='';});localStorage.removeItem(STORAGE_KEY);document.getElementById('save-status').textContent='';}">초기화</button>
-  <button class="btn-primary" id="pdf-btn" onclick="downloadPDF()">PDF로 저장</button>
-</div>
+  <section>
+    <h2>3. 알고리즘 순서 정리하기</h2>
+    <p class="desc">우수법(오른쪽 벽을 따라 이동하기)을 기준으로 빈칸을 채워 봅시다. 앞에 벽이 있는지는 왼쪽 센서로, 오른쪽 벽과의 거리는 오른쪽 센서로 판단합니다.</p>
+    <div class="algo-item"><span class="num">①</span> 왼쪽 센서 값이 <input data-save id="algo-1-value" aria-label="첫 번째 기준값" style="max-width:70px"> 보다 크면 → <input data-save id="algo-1-action" aria-label="첫 번째 동작" placeholder="어느 방향으로 회전할까요?"></div>
+    <div class="algo-item"><span class="num">②</span> 오른쪽 센서 값이 <input data-save id="algo-2-value" aria-label="두 번째 기준값" style="max-width:70px"> 보다 크면 → <input data-save id="algo-2-action" aria-label="두 번째 동작" placeholder="벽과 너무 가까울 때의 동작"></div>
+    <div class="algo-item"><span class="num">③</span> 오른쪽 센서 값이 <input data-save id="algo-3-value" aria-label="세 번째 기준값" style="max-width:70px"> 보다 작으면 → <input data-save id="algo-3-action" aria-label="세 번째 동작" placeholder="벽에서 너무 멀어졌을 때의 동작"></div>
+    <div class="algo-item"><span class="num">④</span> 그 외의 경우 → <input data-save id="algo-4-action" aria-label="네 번째 동작" placeholder="기본 동작"></div>
+  </section>
 
-<script>
-  function downloadPDF() {
-    const toolbar = document.getElementById('toolbar');
-    const btn = document.getElementById('pdf-btn');
-    const originalLabel = btn.textContent;
-    btn.textContent = '저장 중...';
-    btn.disabled = true;
-    toolbar.style.display = 'none';
+  <section>
+    <h2>4. 블록 조립 체크리스트</h2>
+    <div class="checklist">
+      <label><input data-save id="check-1" type="checkbox"> ‘시작하기 버튼을 클릭했을 때’ 블록을 사용했다.</label>
+      <label><input data-save id="check-2" type="checkbox"> ‘계속 반복하기’ 블록 안에 조건문을 넣었다.</label>
+      <label><input data-save id="check-3" type="checkbox"> ‘만일~아니면~만일~아니면’ 구조로 상황을 순서대로 처리했다.</label>
+      <label><input data-save id="check-4" type="checkbox"> 바퀴 굴리기 블록의 왼쪽·오른쪽 속도를 상황에 맞게 설정했다.</label>
+      <label><input data-save id="check-5" type="checkbox"> 실제 미로에서 3회 이상 테스트했다.</label>
+    </div>
+  </section>
 
-    const opt = {
-      margin: 10,
-      filename: '미로탈출_활동지.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
-    };
+  <section>
+    <h2>5. 테스트 결과 및 개선</h2>
+    <div class="table-wrap"><table>
+      <tr><th style="width:12%">시도</th><th style="width:44%">성공·실패 및 문제 상황</th><th>개선 아이디어</th></tr>
+      <tr><td>1</td><td><input data-save id="test-1-result" type="text"></td><td><input data-save id="test-1-improve" type="text"></td></tr>
+      <tr><td>2</td><td><input data-save id="test-2-result" type="text"></td><td><input data-save id="test-2-improve" type="text"></td></tr>
+      <tr><td>3</td><td><input data-save id="test-3-result" type="text"></td><td><input data-save id="test-3-improve" type="text"></td></tr>
+    </table></div>
+  </section>
 
-    html2pdf().set(opt).from(document.body).save().then(() => {
-      toolbar.style.display = 'flex';
-      btn.textContent = originalLabel;
-      btn.disabled = false;
-    }).catch(() => {
-      toolbar.style.display = 'flex';
-      btn.textContent = originalLabel;
-      btn.disabled = false;
-      alert('PDF 저장 중 문제가 발생했습니다. 다시 시도해 주세요.');
-    });
-  }
-</script>
+  <section>
+    <h2>6. 소감 및 배운 점</h2>
+    <textarea data-save id="reflection" placeholder="센서 값, 임계값, 조건문을 사용하며 알게 된 점을 써 보세요."></textarea>
+  </section>
 
-<script>
-  // 학생 개인 브라우저에만 저장됨 (서버 전송 없음). 같은 기기·같은 브라우저에서 다시 열면 이어서 작성 가능.
-  const STORAGE_KEY = 'hamster_maze_worksheet_v1';
-  const fields = Array.from(document.querySelectorAll('input, textarea'));
+  <div class="toolbar" id="toolbar">
+    <span id="save-status" role="status" aria-live="polite"></span>
+    <button class="btn-secondary" id="reset-btn" type="button">초기화</button>
+    <button class="btn-primary" id="pdf-btn" type="button">PDF로 저장</button>
+  </div>
 
-  function saveAll() {
-    const data = fields.map(el => el.type === 'checkbox' ? el.checked : el.value);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+    const STORAGE_KEY = 'hamster_maze_worksheet_v2';
+    const fields = Array.from(document.querySelectorAll('[data-save]'));
     const status = document.getElementById('save-status');
-    status.textContent = '이 브라우저에 저장됨 · ' + new Date().toLocaleTimeString('ko-KR');
-  }
+    let saveTimer;
 
-  function restoreAll() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    try {
-      const data = JSON.parse(raw);
-      fields.forEach((el, i) => {
-        if (data[i] === undefined) return;
-        if (el.type === 'checkbox') el.checked = data[i];
-        else el.value = data[i];
+    function collectData() {
+      return fields.reduce((data, field) => {
+        data[field.id] = field.type === 'checkbox' ? field.checked : field.value;
+        return data;
+      }, {});
+    }
+
+    function saveAll(showStatus = true) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(collectData()));
+        if (showStatus) status.textContent = '자동 저장됨 · ' + new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      } catch (error) {
+        status.textContent = '이 브라우저에서는 자동 저장을 사용할 수 없습니다.';
+      }
+    }
+
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      status.textContent = '작성 중…';
+      saveTimer = setTimeout(() => saveAll(true), 350);
+    }
+
+    function restoreAll() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        if (!document.getElementById('date').value) document.getElementById('date').valueAsDate = new Date();
+        saveAll(false);
+        return;
+      }
+      try {
+        const data = JSON.parse(raw);
+        fields.forEach(field => {
+          if (!(field.id in data)) return;
+          if (field.type === 'checkbox') field.checked = Boolean(data[field.id]);
+          else field.value = data[field.id];
+        });
+        status.textContent = '이전에 작성한 내용을 불러왔습니다.';
+      } catch (error) {
+        status.textContent = '저장된 내용을 불러오지 못했습니다.';
+      }
+    }
+
+    async function downloadPDF() {
+      saveAll(false);
+      const toolbar = document.getElementById('toolbar');
+      const button = document.getElementById('pdf-btn');
+      const originalLabel = button.textContent;
+      const studentName = document.getElementById('name').value.trim().replace(/[\\/:*?"<>|]/g, '_');
+      button.textContent = '저장 중…';
+      button.disabled = true;
+      toolbar.style.display = 'none';
+
+      const options = {
+        margin: [8, 8, 8, 8],
+        filename: studentName ? `미로탈출_활동지_${studentName}.pdf` : '미로탈출_활동지.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], avoid: ['section', 'tr'] }
+      };
+
+      try {
+        await html2pdf().set(options).from(document.body).save();
+      } catch (error) {
+        alert('PDF 저장 중 문제가 발생했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.');
+      } finally {
+        toolbar.style.display = 'flex';
+        button.textContent = originalLabel;
+        button.disabled = false;
+      }
+    }
+
+    function resetWorksheet() {
+      if (!confirm('입력한 내용이 모두 지워집니다. 계속할까요?')) return;
+      fields.forEach(field => {
+        if (field.type === 'checkbox') field.checked = false;
+        else field.value = '';
       });
-      document.getElementById('save-status').textContent = '이전에 저장된 내용을 불러왔습니다';
-    } catch (e) { /* 저장된 데이터가 없거나 손상된 경우 무시 */ }
-  }
+      document.getElementById('date').valueAsDate = new Date();
+      localStorage.removeItem(STORAGE_KEY);
+      saveAll(false);
+      status.textContent = '활동지를 초기화했습니다.';
+    }
 
-  fields.forEach(el => {
-    const evt = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
-    el.addEventListener(evt, saveAll);
-  });
-
-  restoreAll();
-</script>
-
+    fields.forEach(field => {
+      field.addEventListener(field.type === 'checkbox' ? 'change' : 'input', scheduleSave);
+    });
+    document.getElementById('pdf-btn').addEventListener('click', downloadPDF);
+    document.getElementById('reset-btn').addEventListener('click', resetWorksheet);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveAll(false); });
+    window.addEventListener('pagehide', () => saveAll(false));
+    restoreAll();
+  </script>
 </body>
 </html>
