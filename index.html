@@ -259,7 +259,8 @@
     <button class="btn-primary" id="pdf-btn" type="button">PDF로 저장</button>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
     const STORAGE_KEY = 'hamster_maze_worksheet_v5';
     const fields = Array.from(document.querySelectorAll('[data-save]'));
@@ -385,6 +386,9 @@
       document.body.appendChild(renderArea);
 
       try {
+        if (typeof html2canvas !== 'function' || !window.jspdf?.jsPDF) {
+          throw new Error('PDF 제작 프로그램을 불러오지 못했습니다. 페이지를 새로고침해 주세요.');
+        }
         await document.fonts.ready;
         fitPdfSheet(firstPage);
         fitPdfSheet(secondPage);
@@ -407,7 +411,7 @@
         pdf.save(studentName ? `미로탈출_활동지_${studentName}.pdf` : '미로탈출_활동지.pdf');
       } catch (error) {
         console.error(error);
-        alert('PDF 저장 중 문제가 발생했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.');
+        alert('PDF 저장 중 문제가 발생했습니다.\n\n' + (error.message || '페이지를 새로고침한 뒤 다시 시도해 주세요.'));
       } finally {
         renderArea.remove();
         button.textContent = originalLabel;
