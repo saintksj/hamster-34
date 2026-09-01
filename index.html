@@ -136,6 +136,55 @@
       overflow-wrap: anywhere;
       word-break: break-word;
     }
+    .pdf-render-area {
+      position: fixed;
+      left: -10000px;
+      top: 0;
+      width: 794px;
+      z-index: -1;
+    }
+    .pdf-sheet {
+      width: 794px;
+      height: 1123px;
+      padding: 26px 28px;
+      overflow: hidden;
+      color: var(--text);
+      background: #fff;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      line-height: 1.45;
+    }
+    .pdf-sheet-content {
+      width: 100%;
+      transform-origin: top left;
+    }
+    .pdf-sheet h1 { font-size: 22px; }
+    .pdf-sheet .subtitle { margin-bottom: 11px; }
+    .pdf-sheet .meta-row { margin-bottom: 13px; }
+    .pdf-sheet .meta-row input { padding: 7px 9px; }
+    .pdf-sheet section {
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      break-before: auto !important;
+      page-break-before: auto !important;
+    }
+    .pdf-sheet h2 { margin-bottom: 7px; padding-bottom: 5px; }
+    .pdf-sheet p.desc { margin-bottom: 7px; }
+    .pdf-sheet th,
+    .pdf-sheet td { padding: 5px 7px; }
+    .pdf-sheet td input,
+    .pdf-sheet td select { padding: 3px; }
+    .pdf-sheet .algo-item { margin-bottom: 6px; }
+    .pdf-sheet .checklist label { margin-bottom: 6px; }
+    .pdf-sheet .table-wrap { overflow: visible; }
+    .pdf-sheet table { min-width: 0; }
+    .pdf-sheet .reflection-pdf {
+      min-height: 126px;
+      height: auto;
+      text-align: left;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
   </style>
 </head>
 <body>
@@ -192,13 +241,16 @@
       <tr><th style="width:12%">시도</th><th style="width:25%">성공/실패</th><th>문제 상황과 바꾼 값</th></tr>
       <tr><td>1</td><td><input data-save id="test-1-result" type="text"></td><td><input data-save id="test-1-improve" type="text"></td></tr>
       <tr><td>2</td><td><input data-save id="test-2-result" type="text"></td><td><input data-save id="test-2-improve" type="text"></td></tr>
+      <tr><td>3</td><td><input data-save id="test-3-result" type="text"></td><td><input data-save id="test-3-improve" type="text"></td></tr>
+      <tr><td>4</td><td><input data-save id="test-4-result" type="text"></td><td><input data-save id="test-4-improve" type="text"></td></tr>
+      <tr><td>5</td><td><input data-save id="test-5-result" type="text"></td><td><input data-save id="test-5-improve" type="text"></td></tr>
     </table></div>
   </section>
 
   <section>
     <h2>5. 배운 점 정리하기</h2>
-    <p class="desc">오른쪽 벽을 따라 미로를 탈출하며 알게 된 점을 3줄 이상 써 보세요.</p>
-    <textarea data-save id="reflection" rows="3" wrap="soft" placeholder="배운 점을 써 보세요. 입력한 내용에 맞춰 칸이 자동으로 늘어납니다."></textarea>
+    <p class="desc">배운 점을 써 보세요. 내가 발견한 것이나 재미있었던 점을 자유롭게 적어도 좋아요!</p>
+    <textarea data-save id="reflection" rows="3" wrap="soft" placeholder="배운 점을 자유롭게 써 보세요."></textarea>
   </section>
 
   <div class="toolbar" id="toolbar">
@@ -271,44 +323,93 @@
       }
     }
 
+    function copyLiveValues(sheet) {
+      sheet.querySelectorAll('[id]').forEach(cloneField => {
+        const original = document.getElementById(cloneField.id);
+        if (!original) return;
+        if (cloneField.type === 'checkbox') cloneField.checked = original.checked;
+        else if ('value' in cloneField) cloneField.value = original.value;
+      });
+
+      const clonedReflection = sheet.querySelector('#reflection');
+      if (clonedReflection) {
+        const reflectionBox = document.createElement('div');
+        reflectionBox.className = 'reflection-pdf';
+        reflectionBox.textContent = document.getElementById('reflection').value || ' ';
+        clonedReflection.replaceWith(reflectionBox);
+      }
+    }
+
+    function makePdfSheet(elements) {
+      const sheet = document.createElement('div');
+      sheet.className = 'pdf-sheet';
+      const content = document.createElement('div');
+      content.className = 'pdf-sheet-content';
+      elements.forEach(element => content.appendChild(element.cloneNode(true)));
+      sheet.appendChild(content);
+      copyLiveValues(sheet);
+      return sheet;
+    }
+
+    function fitPdfSheet(sheet) {
+      const content = sheet.querySelector('.pdf-sheet-content');
+      const style = getComputedStyle(sheet);
+      const availableHeight = sheet.clientHeight
+        - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+      if (content.scrollHeight <= availableHeight) return;
+      const scale = Math.min(1, availableHeight / content.scrollHeight);
+      content.style.width = `${100 / scale}%`;
+      content.style.transform = `scale(${scale})`;
+    }
+
     async function downloadPDF() {
       saveAll(false);
-      const toolbar = document.getElementById('toolbar');
       const button = document.getElementById('pdf-btn');
       const originalLabel = button.textContent;
       const studentName = document.getElementById('name').value.trim().replace(/[\\/:*?"<>|]/g, '_');
       button.textContent = '저장 중…';
       button.disabled = true;
-      toolbar.style.display = 'none';
 
-      /* html2canvas가 textarea의 여러 줄 값을 한 줄처럼 그리는 경우가 있어,
-         PDF를 만드는 동안만 줄바꿈을 보존하는 일반 영역으로 바꿉니다. */
-      const reflection = document.getElementById('reflection');
-      const reflectionPdf = document.createElement('div');
-      reflectionPdf.className = 'reflection-pdf';
-      reflectionPdf.textContent = reflection.value;
-      reflection.style.display = 'none';
-      reflection.insertAdjacentElement('afterend', reflectionPdf);
-      document.body.classList.add('pdf-export');
+      const sections = Array.from(document.querySelectorAll('body > section'));
+      const renderArea = document.createElement('div');
+      renderArea.className = 'pdf-render-area';
 
-      const options = {
-        margin: [8, 8, 8, 8],
-        filename: studentName ? `미로탈출_활동지_${studentName}.pdf` : '미로탈출_활동지.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'], avoid: ['tr'] }
-      };
+      const firstPage = makePdfSheet([
+        document.querySelector('h1'),
+        document.querySelector('.subtitle'),
+        document.querySelector('.meta-row'),
+        sections[0], sections[1], sections[2]
+      ]);
+      const secondPage = makePdfSheet([sections[3], sections[4]]);
+      renderArea.append(firstPage, secondPage);
+      document.body.appendChild(renderArea);
 
       try {
-        await html2pdf().set(options).from(document.body).save();
+        await document.fonts.ready;
+        fitPdfSheet(firstPage);
+        fitPdfSheet(secondPage);
+        const canvasOptions = {
+          scale: 2,
+          useCORS: true,
+          scrollX: 0,
+          scrollY: 0,
+          backgroundColor: '#ffffff',
+          width: 794,
+          height: 1123
+        };
+        const firstCanvas = await html2canvas(firstPage, canvasOptions);
+        const secondCanvas = await html2canvas(secondPage, canvasOptions);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
+        pdf.addImage(firstCanvas.toDataURL('image/jpeg', 0.96), 'JPEG', 0, 0, 210, 297);
+        pdf.addPage('a4', 'portrait');
+        pdf.addImage(secondCanvas.toDataURL('image/jpeg', 0.96), 'JPEG', 0, 0, 210, 297);
+        pdf.save(studentName ? `미로탈출_활동지_${studentName}.pdf` : '미로탈출_활동지.pdf');
       } catch (error) {
+        console.error(error);
         alert('PDF 저장 중 문제가 발생했습니다. 인터넷 연결을 확인한 뒤 다시 시도해 주세요.');
       } finally {
-        document.body.classList.remove('pdf-export');
-        reflectionPdf.remove();
-        reflection.style.display = '';
-        toolbar.style.display = 'flex';
+        renderArea.remove();
         button.textContent = originalLabel;
         button.disabled = false;
       }
